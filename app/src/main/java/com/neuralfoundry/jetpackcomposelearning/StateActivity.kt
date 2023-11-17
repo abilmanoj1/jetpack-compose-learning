@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -23,18 +24,31 @@ class StateActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ChangeColour(
-                Modifier.fillMaxSize()
-            )
+            Column(Modifier.fillMaxSize()) {
+                val color = remember {
+                    mutableStateOf(Color.Yellow)
+                }
+                ChangeColour(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+
+                ){
+                    color.value = it
+                }
+                Box(modifier = Modifier.background(color.value).weight(1f).fillMaxSize())
+            }
+
         }
     }
 }
 
 @Composable
-fun ChangeColour(modifier: Modifier = Modifier) {
-    var color = remember{
-        mutableStateOf(Color.Yellow)
-    }
+fun ChangeColour(modifier: Modifier = Modifier,
+                 updateColor: (Color) -> Unit) {
+//    var color = remember{
+//        mutableStateOf(Color.Yellow)
+//    }
     //color is a state variable
     //the initial value of variable color is yellow
     //remember -> is a lambda function that helps to retain the state of a variable during recomposing.
@@ -43,13 +57,15 @@ fun ChangeColour(modifier: Modifier = Modifier) {
     //changes will be visible on screen.
 
     Box(modifier = modifier
-        .background(color.value)
+        .background(Color.Red)
         .clickable {
-            color.value = Color(
-                Random.nextFloat(),
-                Random.nextFloat(),
-                Random.nextFloat(),
-                1f
+            updateColor(
+                Color(
+                    Random.nextFloat(),
+                    Random.nextFloat(),
+                    Random.nextFloat(),
+                    1f
+                )
             )
         })
 }
@@ -58,6 +74,6 @@ fun ChangeColour(modifier: Modifier = Modifier) {
 @Composable
 fun ChangeColourPreview() {
     JetpackComposeLearningTheme {
-        ChangeColour()
+//        ChangeColour()
     }
 }
